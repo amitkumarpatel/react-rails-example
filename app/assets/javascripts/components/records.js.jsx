@@ -6,11 +6,23 @@ var Records = createReactClass({
     };
   },
   handleSearch: function() {
-    this.setState({ events: events });
+    this.setState({ records: records });
   },
   handleAdd: function(record) {
     var records = this.state.records;
     records.push(record);
+    this.setState({ records: records });
+  },
+	handleDeleteRecord: function(record) {
+		var records = this.state.records.slice();
+		var index = records.indexOf(record);
+    records.splice(index, 1);
+    this.setState({ records: records });
+  },
+	handleUpdateRecord: function(old_record, event) {
+    var records = this.state.records.slice();
+    var index = records.indexOf(old_record);
+    records.splice(index, 1, record);
     this.setState({ records: records });
   },
   getDefaultProps: function() {
@@ -22,7 +34,9 @@ var Records = createReactClass({
 		var records = [];
     this.props.data.forEach(function(record) {
       records.push(<Record record={record}
-                         key={'record' + record.id}/>);
+                         key={'record' + record.id}
+                         handleDeleteRecord={this.handleDeleteRecord}
+                         handleUpdateRecord={this.handleUpdateRecord} />);
     }.bind(this));
 
     return (
@@ -49,6 +63,7 @@ var Records = createReactClass({
 				    			<th className="col-md-3">Title</th>
 				    			<th className="col-md-3">Date</th>
 				    			<th className="col-md-3">Amount</th>
+								  <th className="col-md-2">Actions</th>
 			    			</tr>
 			    		</thead>
 			    		<tbody>

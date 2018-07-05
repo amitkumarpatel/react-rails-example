@@ -1,7 +1,7 @@
 var SearchForm = createReactClass({
 
   handleSearch: function() {
-    var query = ReactDOM.findDOMNode(this.refs.query).value;
+    var query = this.value;
     var self = this;
     $.ajax({
       url: '/records',
@@ -17,9 +17,10 @@ var SearchForm = createReactClass({
   render: function() {
     return(
       <input onChange={this.handleSearch}
-             type="text"
-             className="form-control"
-             placeholder="Type search phrase here..." />
+            type="text"
+            className="form-control"
+            placeholder="Type search phrase here..." 
+            ref={ref => this.myTextInput = ref} />
     )
   }
 });
