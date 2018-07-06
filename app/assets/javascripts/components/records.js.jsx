@@ -6,6 +6,7 @@ var Records = createReactClass({
     };
   },
   handleSearch: function() {
+    var records = this.state.records;
     this.setState({ records: records });
   },
   handleAdd: function(record) {
@@ -19,7 +20,7 @@ var Records = createReactClass({
     records.splice(index, 1);
     this.setState({ records: records });
   },
-	handleUpdateRecord: function(old_record, event) {
+	handleUpdateRecord: function(old_record, record) {
     var records = this.state.records.slice();
     var index = records.indexOf(old_record);
     records.splice(index, 1, record);

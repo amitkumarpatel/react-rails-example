@@ -24,14 +24,27 @@ var Record = createReactClass({
   	e.preventDefault();
   	this.setState({ edit: !this.state.edit });
 	},
+
+  handleTitleChange: function(e) {
+    this.setState({ title: e.target.value });
+  },
+  handleDateChange: function(e) {
+    this.setState({ date: e.target.value });
+  },
+  handleAmountChange: function(e) {
+    this.setState({ amount: e.target.value });
+  },
+
 	handleUpdate: function(e) {
     e.preventDefault();
+    console.log(self);
     if (this.validRecord()) {
       var event_data = {
-        title: this.recordValue("title"),
-        date: this.recordValue("date"),
-        amount: this.recordValue("amount")
+        title: this.state.title,
+        date: this.state.date,
+        amount: this.state.amount
       };
+    console.log(event_data);
       $.ajax({
         method: 'PUT',
         url: 'records/' + this.props.record.id,
@@ -49,9 +62,8 @@ var Record = createReactClass({
     }
   },
   validRecord: function() {
-    if (this.recordValue("title") &&
-        this.recordValue("amount") &&
-        this.recordValue("date") ) {
+    if (this.props.record.title && this.props.record.date &&
+        this.props.record.amount) {
       return true;
     } else {
       return false;
@@ -67,6 +79,8 @@ var Record = createReactClass({
                   className="form-control"
                   type="text"
 					        ref={ref => this.value = ref}
+                  value={this.state.title}
+                  onChange={this.handleTitleChange}
           />
         </td>
         <td>
@@ -75,6 +89,8 @@ var Record = createReactClass({
                   className="form-control"
                   type="date"
 					        ref={ref => this.value = ref}
+                  value={this.state.date}
+                  onChange={this.handleDateChange}
           />
         </td>
         <td>
@@ -83,6 +99,8 @@ var Record = createReactClass({
                   className="form-control"
                   type="text"
 					        ref={ref => this.value = ref}
+                  value={this.state.amount}
+                  onChange={this.handleAmountChange}
           />
         </td>
         <td>

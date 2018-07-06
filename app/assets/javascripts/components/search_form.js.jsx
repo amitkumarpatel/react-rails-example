@@ -3,6 +3,7 @@ var SearchForm = createReactClass({
   handleSearch: function() {
     var query = this.value;
     var self = this;
+    console.log(this);
     $.ajax({
       url: '/records',
       data: { query: query },
