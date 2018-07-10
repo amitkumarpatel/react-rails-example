@@ -7,19 +7,6 @@ var Record = createReactClass({
     date: PropTypes.string,
     amount:  PropTypes.string
   },
-	handleDelete: function(e) {    
-    e.preventDefault();
-    $.ajax({
-      method: 'DELETE',
-      url: '/records/' + this.props.record.id,
-      success: function(data) {
-        this.props.handleDeleteRecord(this.props.record);
-      }.bind(this),
-      error: function(xhr, status, error) {
-        alert('Cannot delete requested record: ', error);
-      }
-    });
-  },
 	handleToggle: function(e) {
   	e.preventDefault();
   	this.setState({ edit: !this.state.edit });
@@ -34,24 +21,37 @@ var Record = createReactClass({
   handleAmountChange: function(e) {
     this.setState({ amount: e.target.value });
   },
-
+  handleDelete: function(e) {    
+    e.preventDefault();
+    $.ajax({
+      method: 'DELETE',
+      url: '/records/' + this.props.record.id,
+      success: function(data) {
+        console.log(this);
+        this.props.handleDeleteRecord(this.props.record);
+      }.bind(this),
+      error: function(xhr, status, error) {
+        alert('Cannot delete requested record: ', error);
+      }
+    });
+  },
 	handleUpdate: function(e) {
     e.preventDefault();
-    console.log(self);
     if (this.validRecord()) {
       var event_data = {
-        title: this.state.title,
-        date: this.state.date,
-        amount: this.state.amount
+        title: this.title.value,
+        date: this.recordDate.value,
+        amount: this.amount.value
       };
-    console.log(event_data);
       $.ajax({
         method: 'PUT',
         url: 'records/' + this.props.record.id,
         data: { record: event_data },
         success: function(data) {
           this.props.handleUpdateRecord(this.props.record, data);
+          console.log(data);
           this.setState({ edit: false });
+          console.log(this)
         }.bind(this),
         error: function(xhr, status, error) {
           alert('Cannot update requested record: ', error);
@@ -62,8 +62,8 @@ var Record = createReactClass({
     }
   },
   validRecord: function() {
-    if (this.props.record.title && this.props.record.date &&
-        this.props.record.amount) {
+    if (this.state.title || this.state.date ||
+        this.state.amount) {
       return true;
     } else {
       return false;
@@ -78,7 +78,7 @@ var Record = createReactClass({
                   defaultValue={this.props.record.title}
                   className="form-control"
                   type="text"
-					        ref={ref => this.value = ref}
+					        ref={ref => this.title = ref}
                   value={this.state.title}
                   onChange={this.handleTitleChange}
           />
@@ -88,7 +88,7 @@ var Record = createReactClass({
                   defaultValue={this.props.record.date}
                   className="form-control"
                   type="date"
-					        ref={ref => this.value = ref}
+					        ref={ref => this.recordDate = ref}
                   value={this.state.date}
                   onChange={this.handleDateChange}
           />
@@ -98,7 +98,7 @@ var Record = createReactClass({
                   defaultValue={this.props.record.amount}
                   className="form-control"
                   type="text"
-					        ref={ref => this.value = ref}
+					        ref={ref => this.amount = ref}
                   value={this.state.amount}
                   onChange={this.handleAmountChange}
           />

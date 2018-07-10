@@ -4,7 +4,7 @@ class RecordsController < ApplicationController
 	def index
 		query = params[:query]
     #@records = Record.where('title LIKE ? OR place LIKE ? OR description LIKE ?', "%#{query}%", "%#{query}%", "%#{query}%")
-    @records = Record.where('title LIKE ?', "%#{query}%")
+    @records = Record.where('title LIKE ?', "%#{query}%").order(sort_by + ' ' + order)
     #render json: @records
   end
 
@@ -27,7 +27,7 @@ class RecordsController < ApplicationController
 
   def destroy
     @record.destroy
-    head :no_content
+    #head :no_content
   end
 
 	private
@@ -38,5 +38,15 @@ class RecordsController < ApplicationController
 
 	  def set_record
       @record = Record.find(params[:id])
+    end
+
+    def sort_by
+      %w(title
+         amount
+         date).include?(params[:sort_by]) ? params[:sort_by] : 'title'
+    end
+
+    def order
+      %w(asc desc).include?(params[:order]) ? params[:order] : 'asc'
     end
 end

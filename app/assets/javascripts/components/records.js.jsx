@@ -1,9 +1,38 @@
 var Records = createReactClass({
-
   getInitialState: function() {
-    return {
-      records: this.props.data
-    };
+    return { records: [],
+             sort: "title",
+             order: "asc" };
+  },
+
+  getDataFromApi: function() {
+    var self = this;
+    $.ajax({
+      url: '/records',
+      success: function(data) {
+        self.setState({ records: data });
+      },
+      error: function(xhr, status, error) {
+        alert('Cannot get data from API: ', error);
+      }
+    });
+  },
+
+  handleSortColumn: function(title, order) {
+    if (this.state.sort != title) {
+      order = 'asc';
+    }
+    $.ajax({
+      url: '/records',
+      data: { sort_by: title, order: order },
+      method: 'GET',
+      success: function(data) {
+        this.setState({ records: data, sort: title, order: order });
+      }.bind(this),
+      error: function(xhr, status, error) {
+        alert('Cannot sort records: ', error);
+      }
+    });
   },
   handleSearch: function() {
     var records = this.state.records;
@@ -14,32 +43,12 @@ var Records = createReactClass({
     records.push(record);
     this.setState({ records: records });
   },
-	handleDeleteRecord: function(record) {
-		var records = this.state.records.slice();
-		var index = records.indexOf(record);
-    records.splice(index, 1);
-    this.setState({ records: records });
-  },
-	handleUpdateRecord: function(old_record, record) {
-    var records = this.state.records.slice();
-    var index = records.indexOf(old_record);
-    records.splice(index, 1, record);
-    this.setState({ records: records });
-  },
   getDefaultProps: function() {
     return {
       records: []
     };
   },
   render: function() {
-		var records = [];
-    this.props.data.forEach(function(record) {
-      records.push(<Record record={record}
-                         key={'record' + record.id}
-                         handleDeleteRecord={this.handleDeleteRecord}
-                         handleUpdateRecord={this.handleUpdateRecord} />);
-    }.bind(this));
-
     return (
     	<div className="container">
 				<div className="jumbotron">
@@ -58,19 +67,12 @@ var Records = createReactClass({
 
         <div className="row">
           <div className="col-md-12">
-			    	<table className="table table-striped">
-			    		<thead>
-			    			<tr>
-				    			<th className="col-md-3">Title</th>
-				    			<th className="col-md-3">Date</th>
-				    			<th className="col-md-3">Amount</th>
-								  <th className="col-md-2">Actions</th>
-			    			</tr>
-			    		</thead>
-			    		<tbody>
-								{records}
-							</tbody>	
-			    	</table>	
+			    	<RecordTable records={this.props.data}
+                        sort={this.state.sort}
+                        order={this.state.order}
+                        handleDeleteRecord={this.handleDeleteRecord}
+                        handleUpdateRecord={this.handleUpdateRecord}/>
+          
           </div>
         </div>
    		</div>
